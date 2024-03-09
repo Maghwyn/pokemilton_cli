@@ -1,4 +1,5 @@
 import { STUDENTS } from '@/constants/students';
+import { SaveFilePokemilton } from '@/saves/save.type';
 
 class Pokemilton {
 	private _name: string;
@@ -21,6 +22,20 @@ class Pokemilton {
 		this._health = this._maxHealth;
 		this._catchPhrase = this.generateCatchPhrase();
 		this._isDown = false;
+	}
+
+	static loadPokemilton(data: SaveFilePokemilton) {
+		const pokemilton = new Pokemilton();
+		pokemilton._name = data.name;
+		pokemilton._level = data.level;
+		pokemilton._experienceMeter = data.experienceMeter;
+		pokemilton._attackRange = data.attackRange;
+		pokemilton._defenseRange = data.defenseRange;
+		pokemilton._health = data.health;
+		pokemilton._maxHealth = data.maxHealth;
+		pokemilton._catchPhrase = data.catchPhrase;
+		pokemilton._isDown = data.isDown;
+		return pokemilton;
 	}
 
 	generateRandomName() {

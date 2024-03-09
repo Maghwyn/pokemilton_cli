@@ -1,5 +1,6 @@
 import PokemiltonArena from './PokemiltonArena';
 import Pokemilton from './Pokemilton';
+import { SaveFileWorld } from '@/saves/save.type';
 
 class PokemiltonWorld {
 	private _currentDay: number;
@@ -8,6 +9,13 @@ class PokemiltonWorld {
 	constructor() {
 		this._currentDay = 0;
 		this._logs = [];
+	}
+
+	static loadWorld(data: SaveFileWorld) {
+		const world = new PokemiltonWorld();
+		world._currentDay = data.day;
+		world._logs = data.logs;
+		return world;
 	}
 
 	oneDayPasses() {

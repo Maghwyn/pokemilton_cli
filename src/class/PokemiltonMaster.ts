@@ -1,4 +1,5 @@
 import Pokemilton from '@/class/Pokemilton';
+import { SaveFileMaster } from '@/saves/save.type';
 
 class PokemiltonMaster {
 	private _name: string;
@@ -13,6 +14,20 @@ class PokemiltonMaster {
 		this._healingItems = 5; // Initial number of healing items
 		this._reviveItems = 3; // Initial number of revive items
 		this._pokeballs = 10; // Initial number of JOHNEBALLS
+	}
+
+	static loadMaster(data: SaveFileMaster) {
+		// TODO, type the data
+		const master = new PokemiltonMaster(data.name);
+		master._healingItems = data.healingItems;
+		master._reviveItems = data.reviveItems;
+		master._pokeballs = data.pokeballs;
+
+		master._pokemiltonCollection = data['pokemilton™Collection'].map((pokemilton) => {
+			return Pokemilton.loadPokemilton(pokemilton);
+		});
+
+		return master;
 	}
 
 	public renamePokemilton(pokemilton: Pokemilton, name: string) {
