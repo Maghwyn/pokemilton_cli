@@ -105,10 +105,24 @@ class Pokemilton {
 		return this.isDown;
 	}
 
-	// - Override
+	// - Convertors
 
 	toString() {
 		return `${this._name} | ${this._level} | ${this._experienceMeter} | ${this._health} | ${this._maxHealth} | ${this._isDown}`;
+	}
+
+	toObject() {
+		return {
+			name: this._name,
+			level: this._level,
+			health: this._health,
+			maxHealth: this._maxHealth,
+			experienceMeter: this._experienceMeter,
+			attackRange: this._attackRange,
+			catchPhrase: this._catchPhrase,
+			defenseRange: this._defenseRange,
+			isDown: this._isDown,
+		};
 	}
 }
 

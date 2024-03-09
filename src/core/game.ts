@@ -1,5 +1,6 @@
 import readline from 'node:readline/promises';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 
 import PokemiltonMaster from '@/class/PokemiltonMaster';
 import Pokemilton from '@/class/Pokemilton';
@@ -10,18 +11,38 @@ const rl = readline.createInterface({
 	output: process.stdout,
 });
 
-function saveGameState() {}
+const DIR = path.resolve(__dirname, '..', 'saves');
 
-function askForName() {}
+async function saveGameState(world: PokemiltonWorld, master: PokemiltonMaster) {
+	// Hardcoded name
+	const saveFile = 'save.json';
 
-function proposeFirstPokemilton(rl) {}
+	const save = {
+		saved_on: new Date().toISOString(),
+		PokemiltonMaster: {
+			name: master.name,
+			'pokemilton™Collection': master.pokemiltons,
+			healingItems: master.healingItems,
+			reviveItems: master.reviveItems,
+			pokeballs: master.pokeballs,
+		},
+		day: world.today,
+		logs: world.logs,
+	};
+
+	await fs.appendFile(`${DIR}/${saveFile}`, JSON.stringify(save), { flag: 'w' });
+}
+
+async function askForName() {
+	return await rl.question('What is your name ?\n');
+}
 
 function displayPokemiltonList(list: string) {
 	const tabHeader = 'index | name | level | exp | hp | maxHp | isDown';
 	return `${tabHeader}\n${list}`;
 }
 
-async function getMyFirstPokemilton(name: string) {
+async function proposeFirstPokemilton(name: string) {
 	const pokemiltons = [new Pokemilton(), new Pokemilton(), new Pokemilton()];
 
 	const choices = [
@@ -38,12 +59,12 @@ async function getMyFirstPokemilton(name: string) {
 
 	if (isNaN(indexChosen)) {
 		console.log("You didn't choose a pokemilton");
-		return getMyFirstPokemilton(name); // Ask the question again by calling the function itself (looping)
+		return proposeFirstPokemilton(name); // Ask the question again by calling the function itself (looping)
 	}
 
 	if (indexChosen > pokemiltons.length + 1 || indexChosen < 0) {
 		console.log(`There's no pokemilton for the ${indexChosen}th choice`);
-		return getMyFirstPokemilton(name); // Ask the question again by calling the function itself (looping)
+		return proposeFirstPokemilton(name); // Ask the question again by calling the function itself (looping)
 	}
 
 	return pokemiltons[indexChosen];
@@ -51,12 +72,13 @@ async function getMyFirstPokemilton(name: string) {
 
 async function setupGame() {
 	const world = new PokemiltonWorld();
-	const name = await rl.question('What is your name ?\n');
+	const name = await askForName();
 	const master = new PokemiltonMaster(name);
-	const pokemilton = await getMyFirstPokemilton(name);
+	const pokemilton = await proposeFirstPokemilton(name);
 	master.catchPokemilton(pokemilton);
 
 	console.log(pokemilton.toString());
+	saveGameState(world, master);
 }
 
 setupGame();

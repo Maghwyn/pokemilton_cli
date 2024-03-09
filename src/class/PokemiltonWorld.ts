@@ -21,6 +21,16 @@ class PokemiltonWorld {
 		const format = `Day ${this._currentDay} : ${log}`;
 		this._logs.push(format);
 	}
+
+	// - Getter / Setter
+
+	get today() {
+		return this._currentDay;
+	}
+
+	get logs() {
+		return this._logs;
+	}
 }
 
 export default PokemiltonWorld;

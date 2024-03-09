@@ -62,6 +62,30 @@ class PokemiltonMaster {
 	private _doesOwnPokemilton(pokemilton: Pokemilton) {
 		return this._pokemiltonCollection.includes(pokemilton);
 	}
+
+	// - Getter/Setter
+
+	get name() {
+		return this._name;
+	}
+
+	get healingItems() {
+		return this._healingItems;
+	}
+
+	get reviveItems() {
+		return this._reviveItems;
+	}
+
+	get pokeballs() {
+		return this._pokeballs;
+	}
+
+	get pokemiltons() {
+		return this._pokemiltonCollection.map((pokemiltons) => {
+			return pokemiltons.toObject();
+		});
+	}
 }
 
 export default PokemiltonMaster;
