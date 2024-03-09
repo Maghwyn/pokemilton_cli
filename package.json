@@ -1,5 +1,5 @@
 {
-	"name": "iot-trash-scanner-api",
+	"name": "pokemilton-cli",
 	"version": "0.0.1",
 	"description": "",
 	"author": "",
@@ -7,8 +7,8 @@
 	"license": "UNLICENSED",
 	"scripts": {
 		"build": "tsc --project tsconfig.json && tsc-alias",
-		"start": "node dist/core/server.js",
-		"start:dev": "tsx src/core/server.ts",
+		"start": "node dist/core/game.js",
+		"start:dev": "tsx src/core/game.ts",
 		"lint": "eslint \"src/**/*.ts\"",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint:fix": "eslint \"src/**/*.ts\" --fix",
