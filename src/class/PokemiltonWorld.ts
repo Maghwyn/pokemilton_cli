@@ -2,13 +2,25 @@ import PokemiltonArena from './PokemiltonArena';
 import Pokemilton from './Pokemilton';
 
 class PokemiltonWorld {
-	constructor() {}
+	private _currentDay: number;
+	private _logs: Array<string>;
 
-	oneDayPasses() {}
+	constructor() {
+		this._currentDay = 0;
+		this._logs = [];
+	}
 
+	oneDayPasses() {
+		this._currentDay += 1;
+	}
+
+	// ?
 	randomizeEvent() {}
 
-	addLog(newLog: string) {}
+	addLog(log: string) {
+		const format = `Day ${this._currentDay} : ${log}`;
+		this._logs.push(format);
+	}
 }
 
 export default PokemiltonWorld;
