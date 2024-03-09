@@ -6,8 +6,10 @@ class Pokemilton {
 	private _experienceMeter: number;
 	private _attackRange: number;
 	private _defenseRange: number;
-	private _healthPool: number;
+	private _health: number;
+	private _maxHealth: number;
 	private _catchPhrase: string;
+	private _isDown: boolean;
 
 	constructor() {
 		this._name = this.generateRandomName();
@@ -15,8 +17,10 @@ class Pokemilton {
 		this._experienceMeter = 0;
 		this._attackRange = this.getRandomNumber(1, 8);
 		this._defenseRange = this.getRandomNumber(1, 3);
-		this._healthPool = this.getRandomNumber(10, 30);
+		this._maxHealth = this.getRandomNumber(10, 30);
+		this._health = this._maxHealth;
 		this._catchPhrase = this.generateCatchPhrase();
+		this._isDown = false;
 	}
 
 	generateRandomName() {
@@ -39,7 +43,7 @@ class Pokemilton {
 		const damage =
 			this.getRandomNumber(this._attackRange * this._level, this._attackRange) -
 			defender._defenseRange;
-		defender._healthPool -= damage;
+		defender._health -= damage;
 		console.log(`${this._name} attacked ${defender._name} and dealt ${damage} damage!`);
 	}
 
@@ -60,15 +64,51 @@ class Pokemilton {
 
 		this._attackRange += attackIncrease;
 		this._defenseRange += defenseIncrease;
-		this._healthPool += healthIncrease;
+		this._maxHealth += healthIncrease;
+		this._health += healthIncrease;
 
 		console.log(
-			`${this._name} evolved into a higher level! New stats: Level ${this._level}, Attack Range ${this._attackRange}, Defense Range ${this._defenseRange}, Health Pool ${this._healthPool}`,
+			`${this._name} evolved into a higher level! New stats: Level ${this._level}, Attack Range ${this._attackRange}, Defense Range ${this._defenseRange}, Health ${this._health}, Max Health ${this._maxHealth}`,
 		);
 	}
 
 	sayCatchPhrase() {
 		console.log(`${this._name} says: "${this._catchPhrase}"`);
+	}
+
+	// - Own functions
+
+	assignNewName(name: string) {
+		this._name = name;
+	}
+
+	heal() {
+		this._health = this._maxHealth;
+	}
+
+	revive() {
+		this._health = this._maxHealth;
+		this._isDown = false;
+	}
+
+	// - Getter Setter
+
+	get health() {
+		return this._health;
+	}
+
+	get maxHealth() {
+		return this._maxHealth;
+	}
+
+	get isDown() {
+		return this.isDown;
+	}
+
+	// - Override
+
+	toString() {
+		return `${this._name} | ${this._level} | ${this._experienceMeter} | ${this._health} | ${this._maxHealth} | ${this._isDown}`;
 	}
 }
 
