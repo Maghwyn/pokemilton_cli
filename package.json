@@ -1,0 +1,39 @@
+{
+	"name": "iot-trash-scanner-api",
+	"version": "0.0.1",
+	"description": "",
+	"author": "",
+	"private": true,
+	"license": "UNLICENSED",
+	"scripts": {
+		"build": "tsc --project tsconfig.json && tsc-alias",
+		"start": "node dist/core/server.js",
+		"start:dev": "tsx src/core/server.ts",
+		"lint": "eslint \"src/**/*.ts\"",
+		"format": "prettier --write \"src/**/*.ts\"",
+		"lint:fix": "eslint \"src/**/*.ts\" --fix",
+		"postinstall": "husky install && chmod +x .husky/pre-commit"
+	},
+	"lint-staged": {
+		"src/**/*.ts": [
+			"npm run lint:fix"
+		]
+	},
+	"dependencies": {
+
+	},
+	"devDependencies": {
+		"typescript": "^5.4.2",
+		"husky": "8.0.3",
+		"prettier": "^3.2.5",
+		"eslint": "^8.56.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-prettier": "^5.1.3",
+		"@typescript-eslint/eslint-plugin": "^7.0.1",
+		"@typescript-eslint/parser": "^7.0.1",
+		"@types/node": "^20.11.17",
+		"tsc-alias": "^1.8.8",
+		"tsc-watch": "^6.0.4",
+		"tsx": "^4.7.1"
+	}
+}
