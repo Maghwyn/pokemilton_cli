@@ -94,7 +94,9 @@ class PokemiltonBattleManager {
 		const dice = Math.random() * 100;
 
 		if (dice < chances) {
-			this._master.consumePokeball();
+			const consumed = this._master.consumePokeball();
+			if (!consumed) return false;
+
 			this._master.catchPokemilton(this._wildPokemilton);
 			return true;
 		}

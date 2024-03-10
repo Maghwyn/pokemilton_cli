@@ -1,3 +1,6 @@
+import { log } from '@clack/prompts';
+import pc from 'picocolors';
+
 import Pokemilton from '@/class/Pokemilton';
 import { SaveFileMaster } from '@/saves/save.type';
 
@@ -17,7 +20,6 @@ class PokemiltonMaster {
 	}
 
 	static loadMaster(data: SaveFileMaster) {
-		// TODO, type the data
 		const master = new PokemiltonMaster(data.name);
 		master._healingItems = data.healingItems;
 		master._reviveItems = data.reviveItems;
@@ -31,35 +33,54 @@ class PokemiltonMaster {
 	}
 
 	public renamePokemilton(pokemilton: Pokemilton, name: string) {
-		if (!this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
 		pokemilton.assignNewName(name);
 	}
 
 	public healPokemilton(pokemilton: Pokemilton) {
-		if (!this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
-		if (pokemilton.health === pokemilton.maxHealth) return; // TODO: Error
+		if (this.reviveItems === 0) {
+			log.warn(pc.yellow(`You don't have a single remaning healing item.`));
+			return;
+		}
+
+		if (pokemilton.health === pokemilton.maxHealth) {
+			log.warn(pc.yellow(`${pokemilton.name} is already full health !`));
+			return;
+		}
+
 		this._healingItems -= 1;
 		pokemilton.heal();
 	}
 
 	public revivePokemilton(pokemilton: Pokemilton) {
-		if (!this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
-		if (!pokemilton.isDown) return; // TODO: Error
+		if (this.reviveItems === 0) {
+			log.warn(pc.yellow(`You don't have a single remaning revive item.`));
+			return;
+		}
+
+		if (!pokemilton.isDown) {
+			log.warn(pc.yellow(`${pokemilton.name} is not down, can't use the revive item !`));
+			return;
+		}
+
 		this._reviveItems -= 1;
 		pokemilton.revive();
 	}
 
 	public consumePokeball() {
+		if (this._pokeballs === 0) {
+			log.warn(pc.yellow(`You don't have a single remaining pokeballs.`));
+			return false;
+		}
+
 		this._pokeballs -= 1;
+		return true;
 	}
 
 	public catchPokemilton(pokemilton: Pokemilton) {
-		if (this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
 		this._pokemiltonCollection.push(pokemilton);
 	}
 
 	public releasePokemilton(pokemilton: Pokemilton) {
-		if (!this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
 		this._pokemiltonCollection = this._pokemiltonCollection.filter(
 			(poke) => poke !== pokemilton,
 		);
@@ -73,10 +94,6 @@ class PokemiltonMaster {
 			.join('\n');
 
 		return collectionStr;
-	}
-
-	private _doesOwnPokemilton(pokemilton: Pokemilton) {
-		return this._pokemiltonCollection.includes(pokemilton);
 	}
 
 	// - Getter/Setter
