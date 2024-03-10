@@ -104,7 +104,7 @@ class Pokemilton {
 	}
 
 	revive() {
-		this._health = this._maxHealth;
+		this._health = this._maxHealth / 2;
 		this._isDown = false;
 	}
 

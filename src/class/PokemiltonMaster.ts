@@ -101,6 +101,10 @@ class PokemiltonMaster {
 			return pokemiltons.toObject();
 		});
 	}
+
+	get collection() {
+		return this._pokemiltonCollection;
+	}
 }
 
 export default PokemiltonMaster;

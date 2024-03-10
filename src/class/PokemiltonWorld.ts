@@ -1,6 +1,9 @@
-import PokemiltonArena from './PokemiltonArena';
-import Pokemilton from './Pokemilton';
 import { SaveFileWorld } from '@/saves/save.type';
+
+export enum GAME_EVENT {
+	NOTHING = 0,
+	POKEMILTON_BATTLE = 1,
+}
 
 class PokemiltonWorld {
 	private _currentDay: number;
@@ -22,8 +25,10 @@ class PokemiltonWorld {
 		this._currentDay += 1;
 	}
 
-	// ?
-	randomizeEvent() {}
+	generateRandomEvent() {
+		const events = [GAME_EVENT.NOTHING, GAME_EVENT.POKEMILTON_BATTLE];
+		return events[Math.floor(Math.random() * events.length)];
+	}
 
 	addLog(log: string) {
 		const format = `Day ${this._currentDay} : ${log}`;
