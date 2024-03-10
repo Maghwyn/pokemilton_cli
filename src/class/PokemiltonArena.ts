@@ -21,8 +21,6 @@ class PokemiltonArena {
 
 	checkBattleStatus() {}
 
-	startNewRound() {}
-
 	endBattle() {}
 }
 

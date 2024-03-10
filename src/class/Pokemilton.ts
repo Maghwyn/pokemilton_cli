@@ -1,3 +1,5 @@
+import pc from 'picocolors';
+
 import { STUDENTS } from '@/constants/students';
 import { SaveFilePokemilton } from '@/saves/save.type';
 
@@ -117,13 +119,29 @@ class Pokemilton {
 	}
 
 	get isDown() {
-		return this.isDown;
+		return this._isDown;
+	}
+
+	get name() {
+		return this._name;
 	}
 
 	// - Convertors
 
 	toString() {
-		return `${this._name} | ${this._level} | ${this._experienceMeter} | ${this._health} | ${this._maxHealth} | ${this._isDown}`;
+		const percentage = (this._health / this._maxHealth) * 100;
+		const str = `${this._name} | Stats: level ${this._level}, ${this._experienceMeter} exp, ${this._health} hp, ${this._maxHealth} maxHp, ${this._attackRange} atk, ${this._defenseRange} def`;
+
+		switch (true) {
+			case percentage >= 50:
+				return pc.green(str);
+			case percentage >= 25:
+				return pc.yellow(str);
+			case percentage > 0:
+				return pc.red(str);
+			default:
+				return pc.dim(str);
+		}
 	}
 
 	toObject() {
