@@ -60,8 +60,9 @@ class PokemiltonMaster {
 
 	public releasePokemilton(pokemilton: Pokemilton) {
 		if (!this._doesOwnPokemilton(pokemilton)) return; // TODO: Error
-		const index = this._pokemiltonCollection.indexOf(pokemilton);
-		this._pokemiltonCollection.slice(index, 1);
+		this._pokemiltonCollection = this._pokemiltonCollection.filter(
+			(poke) => poke !== pokemilton,
+		);
 	}
 
 	public showCollection() {

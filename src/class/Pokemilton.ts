@@ -1,3 +1,4 @@
+import { log } from '@clack/prompts';
 import pc from 'picocolors';
 
 import { STUDENTS } from '@/constants/students';
@@ -61,13 +62,13 @@ class Pokemilton {
 			this.getRandomNumber(this._attackRange * this._level, this._attackRange) -
 			defender._defenseRange;
 		defender._health -= damage;
-		console.log(`${this._name} attacked ${defender._name} and dealt ${damage} damage!`);
+		log.info(pc.blue(`${this._name} attacked ${defender._name} and dealt ${damage} damage!`));
 	}
 
 	gainExperience(opponentLevel: number) {
 		const experienceGain = this.getRandomNumber(1, 5) * opponentLevel;
 		this._experienceMeter += experienceGain;
-		console.log(`${this._name} gained ${experienceGain} experience points!`);
+		log.info(pc.blue(`${this._name} gained ${experienceGain} experience points!`));
 		if (this._experienceMeter >= this._level * 100) {
 			this.evolve();
 		}
@@ -84,13 +85,15 @@ class Pokemilton {
 		this._maxHealth += healthIncrease;
 		this._health += healthIncrease;
 
-		console.log(
-			`${this._name} evolved into a higher level! New stats: Level ${this._level}, Attack Range ${this._attackRange}, Defense Range ${this._defenseRange}, Health ${this._health}, Max Health ${this._maxHealth}`,
+		log.info(
+			pc.blue(
+				`${this._name} evolved into a higher level! New stats: Level ${this._level}, Attack Range ${this._attackRange}, Defense Range ${this._defenseRange}, Health ${this._health}, Max Health ${this._maxHealth}`,
+			),
 		);
 	}
 
 	sayCatchPhrase() {
-		console.log(`${this._name} says: "${this._catchPhrase}"`);
+		log.info(pc.blue(`${this._name} says: "${this._catchPhrase}"`));
 	}
 
 	// - Own functions
@@ -122,8 +125,16 @@ class Pokemilton {
 		return this._isDown;
 	}
 
+	set isDown(value: boolean) {
+		this._isDown = value;
+	}
+
 	get name() {
 		return this._name;
+	}
+
+	get level() {
+		return this._level;
 	}
 
 	// - Convertors

@@ -6,6 +6,15 @@ import PokemiltonWorld, { GAME_EVENT } from '@/class/PokemiltonWorld';
 import { saveGameState } from '@/core/save';
 import Pokemilton from '@/class/Pokemilton';
 import { killGame } from '@/utils/kill';
+import PokemiltonBattleManager, { BATTLE_ACTION } from '@/class/PokemiltonBattleManager';
+
+enum GAME_ACTION {
+	HEAL_POKEMILTON = 1,
+	REVIVE_POKEMILTON = 2,
+	RELEASE_POKEMILTON = 3,
+	RENAME_POKEMILTON = 4,
+	DO_NOTHING = 5,
+}
 
 export const launchGameIntro = async (world: PokemiltonWorld, master: PokemiltonMaster) => {
 	const pokemilton = await proposeFirstPokemilton(master.name);
@@ -38,14 +47,6 @@ export const proposeFirstPokemilton = async (name: string) => {
 	return pokemiltonChoosen;
 };
 
-enum GAME_ACTION {
-	HEAL_POKEMILTON = 1,
-	REVIVE_POKEMILTON = 2,
-	RELEASE_POKEMILTON = 3,
-	RENAME_POKEMILTON = 4,
-	DO_NOTHING = 5,
-}
-
 export const launchGameLoop = async (world: PokemiltonWorld, master: PokemiltonMaster) => {
 	await askMasterDailyAction(master);
 	await dailyRandomEvent(world, master);
@@ -53,23 +54,11 @@ export const launchGameLoop = async (world: PokemiltonWorld, master: PokemiltonM
 	world.oneDayPasses();
 	saveGameState(world, master);
 	return launchGameLoop(world, master); // Recursive
-
-	// Part 7:
-	// TODO: When a fight start a new Pokemilton is created
-	// TODO: Before the master choose to fight or not, the wild pokemilton introduce itself as "A wild level X, XXXXXXX Appears, it has XX Health"
-	// TODO: We ask the master to choose a pokemilton from his collection to start the fight with
-	// TODO: Then fight start and we ask again what the master wants to do
-	// TODO: 1. Atack the wild pokemilton and end the game if the wild pokemilton is KO
-	// TODO: 2. Try to catch the pokemilton and it end the game if successfull
-	// TODO: 3. Change the pokemilton used for the fight
-	// TODO: 4. Run away, it ends the fight
-	// TODO: Once the master has done his action, then the wild pokemilton will do its action unless the fight ended
-	// TODO: When the fight is over, it display the result of the fight, perform the experience gain and we save the data
 };
 
 const askMasterDailyAction = async (master: PokemiltonMaster) => {
 	const action = (await select({
-		message: 'What do you wish to do ?',
+		message: `${master.name}, what do you wish to do ?`,
 		options: [
 			{ value: GAME_ACTION.HEAL_POKEMILTON, label: 'Heal a pokemilton' },
 			{ value: GAME_ACTION.REVIVE_POKEMILTON, label: 'Revive a pokemilton' },
@@ -108,7 +97,12 @@ const dailyRandomEvent = async (world: PokemiltonWorld, master: PokemiltonMaster
 	const event = world.generateRandomEvent();
 
 	if (event === GAME_EVENT.POKEMILTON_BATTLE) {
-		log.info(pc.blue(`A wild pokemon appeared !`));
+		const wildPokemilton = new Pokemilton();
+		log.info(
+			pc.blue(
+				`A wild level ${wildPokemilton.level}, ${wildPokemilton.name} Appears, it has ${wildPokemilton.health} Health`,
+			),
+		);
 
 		const shouldBattle = (await confirm({
 			message: 'Do you want to fight the pokemilton ?',
@@ -119,12 +113,52 @@ const dailyRandomEvent = async (world: PokemiltonWorld, master: PokemiltonMaster
 		}
 
 		if (shouldBattle) {
-			// START THE FIGHT
+			await fightBattle(master, wildPokemilton);
 		}
-
-		// OR DO NOTHING EITHER CASE
 	} else if (event === GAME_EVENT.NOTHING) {
 		log.info(pc.blue(`Nothing happen today... moving on to day ${world.today + 1}`));
+	}
+};
+
+const fightBattle = async (master: PokemiltonMaster, wildPokemilton: Pokemilton) => {
+	const masterPokemilton = await choosePokemilton(master);
+	const battleManager = new PokemiltonBattleManager(masterPokemilton, wildPokemilton, master);
+
+	while (battleManager.isBattleActive) {
+		const options = [
+			{
+				value: BATTLE_ACTION.ATTACK,
+				label: `Attack ${wildPokemilton.name} with ${masterPokemilton.name}`,
+			},
+			{ value: BATTLE_ACTION.CATCH, label: `Try to catch ${wildPokemilton.name}` },
+			{
+				value: BATTLE_ACTION.SWITCH,
+				label: `Change ${masterPokemilton.name} with another pokemilton`,
+			},
+			{ value: BATTLE_ACTION.RUN_AWAY, label: `Escape` },
+		];
+
+		const action = (await select({
+			message: `${master.name}, what do you wish to do ?`,
+			options: battleManager.isForcedToSwitch ? [options[2]] : options,
+		})) as BATTLE_ACTION;
+
+		await battleManager.playerAction(action);
+
+		if (battleManager.isBattleActive) {
+			battleManager.wildPokemiltonAction();
+		} else {
+			if (battleManager.hasWon) {
+				log.success(
+					pc.green(`${master.name} won the fight against ${wildPokemilton.name} !`),
+				);
+				battleManager.awardExperiencePoints();
+			} else {
+				log.success(
+					pc.green(`${master.name} lost the fight against ${wildPokemilton.name} !`),
+				);
+			}
+		}
 	}
 };
 
